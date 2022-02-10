@@ -1,6 +1,7 @@
 from cgi import test
 import csv
 import pprint
+from turtle import st
 pp = pprint.PrettyPrinter(indent=4)
 class GenerateReport:
     def __init__(self, courses, marks, students, tests):
@@ -98,10 +99,10 @@ class GenerateReport:
             s_dict['totalAverage'] = 0
             s_dict['courses'] = []
             print(s_dict)
-        # for student in self.marks:
-        #     averages = []
-        #     if student in self.marks:
-        #         for scores in self.marks:
+        
+        for mark in self.marks.values():
+            for test in mark:
+                print(test)
 
 
 
@@ -117,4 +118,4 @@ report = GenerateReport('courses.csv', 'marks.csv','students.csv','tests.csv')
 # pp.pprint(report.marks)
 # report.checkTestWeights()
 # report.reportCards()
-report.getCourse('1')
+report.reportCards()
