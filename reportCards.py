@@ -48,10 +48,10 @@ class GenerateReport:
                     temp_d = dict(zip(keys, tests[i]))
                     clean_list.append(temp_d)
             for i in range(len(clean_list)):
-                if clean_list[i]['test_id'] in d:
-                    d[clean_list[i]['test_id']].append(clean_list[i])
+                if clean_list[i]['student_id'] in d:
+                    d[clean_list[i]['student_id']].append(clean_list[i])
                 else:
-                    d[clean_list[i]['test_id']] = [clean_list[i]]
+                    d[clean_list[i]['student_id']] = [clean_list[i]]
             # pp.pprint(d)
             return d
     
@@ -73,11 +73,29 @@ class GenerateReport:
         else:
             print('All courses are weighted properly!')
 
+    def reportCards(self):
+        output = {'students':[]}
+        for student in self.students.values():
+            id = student['id']
+            name =  student['name']
+            s_dict = {}
+            s_dict['id'] = id
+            s_dict['name'] = name
+            s_dict['totalAverage'] = 0
+            s_dict['courses'] = []
+            print(s_dict)
+        for student in self.students:
+            
+
+
+
+
 
 
 
 
 report = GenerateReport('courses.csv', 'marks.csv','students.csv','tests.csv')
-
-
+pp.pprint(report.students)
+pp.pprint(report.marks)
 report.checkTestWeights()
+report.reportCards()
