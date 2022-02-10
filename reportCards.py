@@ -85,7 +85,11 @@ class GenerateReport:
             s_dict['courses'] = []
             print(s_dict)
         for student in self.students:
-            
+            averages = []
+            if student in self.marks:
+                for scores in self.marks:
+                    
+
 
 
 
