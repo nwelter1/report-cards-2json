@@ -1,3 +1,4 @@
+from cgi import test
 import csv
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -54,7 +55,20 @@ class GenerateReport:
                     d[clean_list[i]['student_id']] = [clean_list[i]]
             # pp.pprint(d)
             return d
+    def test2Course(self):
+        test_2_course = {}
+        for test_id in self.tests:
+            course_id = self.tests[test_id]['course_id']
+            if course_id not in test_2_course:
+                test_2_course[course_id] = self.courses[course_id]['name']
+        return test_2_course
     
+    def getCourse(self,test_id):
+        courses = self.test2Course()
+        return courses[test_id]
+    
+            
+
     def checkTestWeights(self):
         weight_totals = {}
         weight_check = []
@@ -84,11 +98,11 @@ class GenerateReport:
             s_dict['totalAverage'] = 0
             s_dict['courses'] = []
             print(s_dict)
-        for student in self.students:
-            averages = []
-            if student in self.marks:
-                for scores in self.marks:
-                    
+        # for student in self.marks:
+        #     averages = []
+        #     if student in self.marks:
+        #         for scores in self.marks:
+
 
 
 
@@ -99,7 +113,8 @@ class GenerateReport:
 
 
 report = GenerateReport('courses.csv', 'marks.csv','students.csv','tests.csv')
-pp.pprint(report.students)
-pp.pprint(report.marks)
-report.checkTestWeights()
-report.reportCards()
+# pp.pprint(report.students)
+# pp.pprint(report.marks)
+# report.checkTestWeights()
+# report.reportCards()
+report.getCourse('1')
