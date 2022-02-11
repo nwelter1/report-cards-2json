@@ -2,6 +2,7 @@ from cgi import test
 import csv
 import pprint
 from turtle import st
+import json
 pp = pprint.PrettyPrinter(indent=4)
 class GenerateReport:
     def __init__(self, courses, marks, students, tests):
@@ -101,7 +102,8 @@ class GenerateReport:
             s_dict['name'] = name
             s_dict['courses'] = self.calculateAverageClass(id)
             s_dict['totalAverage'] = self.calculateTotalAverage(s_dict['courses'])
-            print(s_dict)
+            output['students'].append(s_dict)
+        return output
 
     def calculateTotalAverage(self, grades):
         count = 0
@@ -141,4 +143,5 @@ pp.pprint(report.marks)
 # report.checkTestWeights()
 print(report.testCourseMerge())
 report.calculateAverageClass('2')
-report.reportCards()
+with open('test.json', 'w') as f:
+    json.dump(report.reportCards(), f)
