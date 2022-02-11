@@ -9,6 +9,7 @@ class GenerateReport:
         self.marks = self.generate_marks(marks)
         self.students = self.generate_ids(students)
         self.tests = self.generate_ids(tests)
+        self.test_course = self.testCourseMerge()
     
     # generating python dicts for all csv records containing an 'id' field
     def generate_ids(self, file):
@@ -56,12 +57,14 @@ class GenerateReport:
                     d[clean_list[i]['student_id']] = [clean_list[i]]
             # pp.pprint(d)
             return d
-    def test2Course(self):
+    def testCourseMerge(self):
         test_2_course = {}
         for test_id in self.tests:
+            weight = self.tests[test_id]['weight']
             course_id = self.tests[test_id]['course_id']
-            if course_id not in test_2_course:
-                test_2_course[course_id] = self.courses[course_id]['name']
+            teacher = self.courses[course_id]['teacher']
+            name = self.courses[course_id]['name']
+            test_2_course[test_id] = [course_id, name, teacher, weight]
         return test_2_course
     
     def getCourse(self,test_id):
@@ -96,13 +99,32 @@ class GenerateReport:
             s_dict = {}
             s_dict['id'] = id
             s_dict['name'] = name
-            s_dict['totalAverage'] = 0
-            s_dict['courses'] = []
+            s_dict['courses'] = self.calculateAverageClass(id)
+            s_dict['totalAverage'] = self.calculateTotalAverage(s_dict['courses'])
             print(s_dict)
-        
-        for mark in self.marks.values():
-            for test in mark:
-                print(test)
+
+    def calculateTotalAverage(self, grades):
+        count = 0
+        for grade in grades.values():
+            count += grade
+        return count/len(grades.values())
+
+    def calculateAverageClass(self,student_id):
+        results = {}
+        for grade in self.marks[student_id]:
+            test_id = grade['test_id']
+            course_id = self.test_course[test_id][0]
+            mark = int(grade['mark'])/100
+            weight = int(self.test_course[test_id][3])
+            test_score = round(mark*weight,1)
+
+            # adding weights into full class avg
+            if course_id in results:
+                results[course_id] += test_score
+            else:
+                results[course_id] = test_score
+
+        return results
 
 
 
@@ -115,7 +137,8 @@ class GenerateReport:
 
 report = GenerateReport('courses.csv', 'marks.csv','students.csv','tests.csv')
 # pp.pprint(report.students)
-# pp.pprint(report.marks)
+pp.pprint(report.marks)
 # report.checkTestWeights()
-# report.reportCards()
+print(report.testCourseMerge())
+report.calculateAverageClass('2')
 report.reportCards()
