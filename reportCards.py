@@ -58,7 +58,7 @@ class GenerateReport:
                     d[clean_list[i]['student_id']] = [clean_list[i]]
             # pp.pprint(d)
             return d
-    # Joining tests and 
+    # Joining tests and courses for easier analysis later on
     def testCourseMerge(self):
         test_2_course = {}
         for test_id in self.tests:
@@ -68,20 +68,20 @@ class GenerateReport:
             name = self.courses[course_id]['name']
             test_2_course[test_id] = [course_id, name, teacher, weight]
         return test_2_course
-    
+    # checking to see if there are any classes that are weighted incorrectly
     def checkTestWeights(self):
         weight_totals = {}
-        weight_check = []
+        incorrect_weights = []
         for test in self.tests.values():
             if test['course_id'] in weight_totals:
                 weight_totals[test['course_id']] += int(test['weight'])
             else:
                 weight_totals[test['course_id']] = int(test['weight'])
-        for key in weight_totals:
-            if weight_totals[key] != 100:
-                weight_check.add(self.courses[key])
-                print(f'{self.courses[key]["teacher"]}\'s tests have a weight of {weight_totals[key]}. Please adjust to 100 before moving on.')
-        if not len(weight_check):
+        for key, total in weight_totals.items():
+            if total != 100:
+                incorrect_weights.append(self.courses[key])
+                print(f'{self.courses[key]["teacher"]}\'s tests have a weight of {total}. Please adjust to 100 before moving on.')
+        if not len(incorrect_weights):
             return True
         return False 
 
@@ -110,7 +110,15 @@ class GenerateReport:
             class_dict['courseAverage'] = final_grades[course_id]
             student_courses.append(class_dict)
         return student_courses
+    
+
     def calculateTotalAverage(self, courses):
+        '''
+        Method to calculated a total grade average based on 
+        a list of dictionaries containing course info
+        Method loops over each course that student took, finds their average grade,
+        then averages into one final grade based on marks/number of classes taken
+        '''
         total = 0
         count = 0
         for grade in courses:
@@ -119,6 +127,10 @@ class GenerateReport:
         return total/count
 
     def calculateAverageClass(self,student_id):
+        '''
+        method looks at all grades in a given students list of marks
+        finds the test_id in each 
+        '''
         results = {}
         for grade in self.marks[student_id]:
             test_id = grade['test_id']
@@ -135,32 +147,15 @@ class GenerateReport:
 
         return results
 
-
-
-
-
-
-
-
-
-
-# report = GenerateReport('courses.csv', 'marks.csv','students.csv','tests.csv')
-# # # pp.pprint(report.students)
-# # pp.pprint(report.marks)
-# # # report.checkTestWeights()
-# # print(report.testCourseMerge())
-# # report.calculateAverageClass('2')
-# with open('test.json', 'w') as f:
-#     json.dump(report.reportCards(), f)
-# print(report.generateCourseReport('1'))
-
+# driver code
 def run(courses, marks, students, tests):
     report = GenerateReport(courses, marks, students, tests)
     if not report.checkTestWeights():
-        return 3
+        return 
     with open('test.json', 'w') as f:
         json.dump(report.reportCards(), f)
     print('Successfully wrote report cards to JSON!')
+# run the driver code
+#run('courses.csv', 'marks.csv','students.csv','tests.csv')
 
-run('courses.csv', 'marks.csv','students.csv','tests.csv')
 
